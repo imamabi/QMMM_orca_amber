@@ -1,0 +1,64 @@
+#!/usr/bin/sh
+
+###load protein force field
+source leaprc.protein.ff14SB
+
+###load GAFF force field (for our ligand)
+source leaprc.gaff
+
+###load TIP3P (water) force field
+source leaprc.water.tip3p
+
+###load ions frcmod for the tip3p model
+loadamberparams frcmod.ionsjc_tip3p
+ 
+###needed so we can use igb=8 model
+set default PBradii mbondi3
+
+###load protein pdb file
+rec=loadpdb L858R.pdb
+ 
+##THIS IS WHERE YOU WOULD DEFINE DISULFIDE BONDS
+#NUMBERING SHOULD MATCH INPUT PDB FILE
+##bond rec.649.SG rec.762.SG
+##bond rec.454.SG rec.472.SG
+##bond rec.444.SG rec.447.SG
+##bond rec.328.SG rec.339.SG
+##bond rec.385.SG rec.394.SG
+
+###load ligand frcmod/mol2
+loadamberparams AZD9291_ligand.am1bcc.frcmod
+lig=loadmol2 AZD9291_ligand_antechamber.mol2
+
+###create gase-phase complex
+gascomplex= combine {rec lig}
+
+###write gas-phase pdb
+savepdb gascomplex L858R.gas.complex.pdb
+
+###write gase-phase toplogy and coord files for MMGBSA calc
+saveamberparm gascomplex L858R.complex.parm7 L858R.gas.complex.rst7
+saveamberparm rec L858R.gas.receptor.parm7 L858R.gas.receptor.rst7
+saveamberparm lig AZD9291.gas.ligand.parm7 AZD9291.gas.ligand.rst7
+
+###create solvated complex (albeit redundant)
+solvcomplex= combine {rec lig}
+  
+###solvate the system
+solvateoct solvcomplex TIP3PBOX 12.0
+
+###Neutralize system
+addions solvcomplex Cl- 0
+addions solvcomplex Na+ 0
+  
+#write solvated pdb file
+savepdb solvcomplex L858R.wet.complex.pdb
+
+###check the system
+charge solvcomplex
+check solvcomplex
+  
+###write solvated toplogy and coordinate file
+saveamberparm solvcomplex L858R.wet.complex.prmtop L858R.wet.complex.rst7
+
+quit

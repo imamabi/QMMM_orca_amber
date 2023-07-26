@@ -1,0 +1,19 @@
+source leaprc.protein.ff14SB #Source leaprc file for ff14SB protein force field
+#source leaprc.gaff2 #Source leaprc file for gaff
+source leaprc.water.tip3p #Source leaprc file for TIP3P water model
+
+###load ions frcmod for the tip3p model
+loadamberparams frcmod.ionsjc_tip3p
+
+###needed so we can use igb=8 model
+set default PBradii mbondi3
+
+my_pro = loadpdb L858R.pdb      #load protein file
+
+saveamberparm my_pro L858R_par.prmtop L858R_par.inpcrd
+
+#mol = loadpdb 1ODX_clean_H.pdb #Load PDB file for protein-ligand complex
+#solvatebox mol TIP3PBOX 8 #Solvate the complex with a cubic water box
+#addions mol Cl- 0 #Add Cl- ions to neutralize the system
+#saveamberparm mol 1ODX.prmtop 1ODX.inpcrd #Save AMBER topology and coordinate files
+quit #Quit tleap program

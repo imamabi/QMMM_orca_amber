@@ -1,0 +1,53 @@
+# QM/MM script for single point energy calculation
+
+!QMMM B3LYP SP RIJCOSX def2-SVP def2/J TightSCF LargePrint                #MM keywords will also affect the MM part of the QMMM calculation
+
+%QMMM
+  QMAtoms {417:442 471:490 512:527 549:570 800:809 829:850 1534:1652 1672:1723 1740:1778 2370:2407 2424:2442 2600:2625 4992:5008 5300:5372} END END
+
+
+#Self-contesting field   (iteration)
+%scf
+  maxiter 120
+end
+
+
+#Molecular mechanics description
+%mm
+  # Schemes for the truncation of long-range
+  # Coulomb and LJ interaction:
+  # The Shift Force scheme for the Coulomb interaction shifts the Coulomb potential
+  # such that it becomes zero at the cutoff distance.
+
+  ShiftForceCoulomb true                      # Use the shift force scheme for the Coulomb interaction. Default: true.
+  CoulombCutOff 12.                           # Distance (in Ang). Default: 12 Ang.
+
+  # With the Switch Force scheme for the LJ interaction is unchanged up to
+  # LJCutOffInner. Between LJCutOffInner and LJCutOffOuter a smooth switching function
+  # is applied onto the LJ potential so that the force goes down to zero at
+  # LJCutOffOuter, without introducing discontinuities.
+
+  SwitchForceLJ true                          # Use the switch force scheme for the LJ interaction. Default: true.
+  LJCutOffInner 10.                           # Distance (in Ang). Default: 10 Ang.
+  LJCutOffOuter 12.                           # Distance (in Ang). Default: 12 Ang.
+  DielecConst 1.                              # dielectric constant used in calc. of electrostatic interaction. Default: 1.
+  Coulomb14Scaling 1.                         # Scaling factor for electrostatic interaction between 1,4-bonded atoms. Default: 1.
+  PrintLevel 3                                # Printing options: Can be 0 to 4, 0=nothing, 1=normal, ...
+
+  # Keywords that can be accessed from the mm as well as the qmmm block.
+  # For a description see qmmm block.
+  # Information about topology and force field
+
+  ORCAFFFilename "L858R_solv.ORCAFF.prms"     # If available, e.g. from a previous run, or after modification, the ORCA Forcefield can be provided.
+
+  # Computing MM nonbonded interactions within non-active region.
+
+  Do_NB_For_Fixed_Fixed true                  # Compute MM-MM nonbonded interaction also for non-active atom pairs. Default true.
+
+  # Optimization and MD of active MM waters
+  RIGID_MM_WATER false                        # Default: false.
+
+
+end
+
+*pdbfile 0 1 L858R_solv.pdb                   # structure input via pdb file, but also possible via xyz file

@@ -1,0 +1,38 @@
+# Orca QM/MM Single-Point Energy Calculation
+! QMMM SP BP86 RIJCOSX D3BJ TightSCF
+
+% MaxCore 6000
+
+%pal
+nprocs 44
+end
+
+%basis
+Basis "cc-pVDZ"
+Aux "def2/J"
+end
+
+%scf
+AutoTRAHIter 300
+MaxIter 500
+end
+
+%mm
+ORCAFFFilename "myfile.ORCAFF.prms"
+SwitchForceLJ true
+LJCutOffInner 10.
+LJCutOffOuter 12.
+ShiftForceCoulomb true
+CoulombCutOff 12.
+Rigid_MM_Water true
+Coulomb14Scaling 1.0
+end
+
+%qmmm
+QMAtoms {4398:4459 5423} end
+ActiveAtoms {4318:4320 4323:4328 4335:4343 4350:4362 4369:4379 4386:4389 4398:4459 5423 5451:5456} end
+ExtendActiveRegion no
+end
+
+*pdbfile 0 1 myfile.pdb
+

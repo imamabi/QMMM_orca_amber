@@ -1,0 +1,29 @@
+1. Use chimera to separate the ligand from the protein
+   a. Protonate the ligand and save it as pdf
+   b. Protonate the protein as save as pdf (vmd for protein gives better result)
+
+2. Use amber antechamber to generate the ligands force field. And parmchk2 to generate the ff correction parameter.
+
+antechamber -i sep_ligand.pdb -fi pdb -o ADZ9291.mol2 -fo mol2 -c bcc -at gaff2 -rn YY3 -nc -1
+
+parmchk2 -i ADZ9291.mol2 -f mol2 -o AZD9291_lig.frcmod
+
+3. Generate the promtop and inpcrd files using the lig_input.in script.
+
+##### Run the ligand input file   ##########
+#''' tleap -s -f lig_input.in      #-s is for stric checking
+
+
+4. Convert the port.pdb residues to amber-type residues
+
+pdb4amber -i sep_protein.pdb -o prot.pdb --reduce --dry
+
+
+##### Run the protein input file ############
+#''' tleap -s -f prot_input.in      #-s is for stric checking
+
+###Next combine prtein and ligand
+###Then solvate
+###Then add ions
+
+########################### Prep file ready for simulation ##################################
